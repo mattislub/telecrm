@@ -259,7 +259,7 @@ const APIGuide: React.FC = () => {
                   </div>
                   <div>
                     <p className="font-medium text-gray-700">calltype</p>
-                    <p className="text-gray-600">סוג השיחה (missedcall/voice)</p>
+                    <p className="text-gray-600">סוג השיחה (missedcall/verification)</p>
                   </div>
                   <div>
                     <p className="font-medium text-gray-700">verifictioncode</p>

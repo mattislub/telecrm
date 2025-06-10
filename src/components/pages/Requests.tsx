@@ -458,7 +458,7 @@ const Requests: React.FC = () => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   >
                     <option value="missedcall">שיחה חסרה</option>
-                    <option value="voice">שיחה קולית</option>
+                    <option value="verification">אימות</option>
                   </select>
                 </div>
 
