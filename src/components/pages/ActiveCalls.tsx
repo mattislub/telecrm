@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Phone, Clock, User, PhoneOff, Pause, Play, Building, Car } from 'lucide-react';
+import { Phone, Clock, User, PhoneOff, Pause, Play, Building, Car, ChevronDown, ChevronUp } from 'lucide-react';
 import { Call } from '../../types';
 
 const ActiveCalls: React.FC = () => {
   const [calls, setCalls] = useState<Call[]>([]);
+  const [expandedCalls, setExpandedCalls] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     // Mock data for active calls
@@ -78,6 +79,16 @@ const ActiveCalls: React.FC = () => {
     setCalls(calls.filter(call => call.id !== callId));
   };
 
+  const toggleExpanded = (callId: string) => {
+    const newExpanded = new Set(expandedCalls);
+    if (newExpanded.has(callId)) {
+      newExpanded.delete(callId);
+    } else {
+      newExpanded.add(callId);
+    }
+    setExpandedCalls(newExpanded);
+  };
+
   return (
     <div className="space-y-6">
       {/* Stats */}
@@ -150,75 +161,57 @@ const ActiveCalls: React.FC = () => {
           {calls.map((call) => (
             <div key={call.id} className="p-6 hover:bg-gray-50 transition-colors duration-200">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-8 space-x-reverse">
+                {/* Basic Info */}
+                <div className="flex items-center space-x-8 space-x-reverse flex-1">
                   <div className={`w-3 h-3 rounded-full ${getStatusColor(call.status)} animate-pulse`}></div>
                   
-                  {/* Client Info */}
-                  <div className="min-w-0">
-                    <h4 className="text-lg font-semibold text-gray-900 mb-1">👤 לקוח</h4>
-                    <p className="text-base font-medium text-gray-800">{call.clientName}</p>
-                    <div className="space-y-1 mt-2">
-                      <p className="text-sm text-gray-600 flex items-center">
-                        <Phone className="w-4 h-4 ml-1 text-green-600" />
-                        <span className="font-medium">טלפון:</span>
-                        <span className="mr-2 font-mono">{call.phoneNumber}</span>
-                      </p>
-                      <p className="text-sm text-gray-600 flex items-center">
-                        <User className="w-4 h-4 ml-1 text-blue-600" />
-                        <span className="font-medium">זיהוי:</span>
-                        <span className="mr-2 font-mono text-xs bg-blue-50 px-2 py-1 rounded">
-                          {call.clientCallerId}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Driver Info */}
-                  <div className="min-w-0">
-                    <h4 className="text-lg font-semibold text-gray-900 mb-1">🚗 נהג</h4>
-                    <p className="text-base font-medium text-gray-800">{call.driverId}</p>
-                    <div className="space-y-1 mt-2">
-                      <p className="text-sm text-gray-600 flex items-center">
-                        <Phone className="w-4 h-4 ml-1 text-green-600" />
-                        <span className="font-medium">טלפון:</span>
-                        <span className="mr-2 font-mono">{call.driverPhone}</span>
-                      </p>
-                      <p className="text-sm text-gray-600 flex items-center">
-                        <User className="w-4 h-4 ml-1 text-blue-600" />
-                        <span className="font-medium">זיהוי:</span>
-                        <span className="mr-2 font-mono text-xs bg-blue-50 px-2 py-1 rounded">
-                          {call.driverCallerId}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Company Info */}
-                  <div className="min-w-0">
-                    <h4 className="text-lg font-semibold text-gray-900 mb-1">🏢 חברה</h4>
-                    <div className="space-y-2 mt-2">
-                      <p className="text-sm text-gray-700 flex items-center">
-                        <Building className="w-4 h-4 ml-1 text-purple-600" />
-                        <span className="font-medium">מזהה:</span>
-                        <span className="mr-2 font-mono text-xs bg-purple-50 px-2 py-1 rounded">
-                          {call.companyId}
-                        </span>
-                      </p>
+                  {/* Client Basic Info */}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center space-x-4 space-x-reverse">
+                      <div>
+                        <h4 className="text-base font-semibold text-gray-900 flex items-center">
+                          👤 {call.clientName}
+                        </h4>
+                        <p className="text-sm text-gray-600 font-mono">{call.phoneNumber}</p>
+                      </div>
+                      
+                      <div className="text-gray-300">↔</div>
+                      
+                      <div>
+                        <h4 className="text-base font-semibold text-gray-900 flex items-center">
+                          🚗 {call.driverId}
+                        </h4>
+                        <p className="text-sm text-gray-600 font-mono">{call.driverPhone}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
 
+                {/* Duration and Actions */}
                 <div className="flex items-center space-x-6 space-x-reverse">
                   {/* Duration */}
                   <div className="text-center">
                     <p className="text-sm font-medium text-gray-600">משך זמן</p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-xl font-bold text-gray-900">
                       {formatDuration(call.duration || 0)}
                     </p>
                     <p className="text-xs text-gray-500">
                       {call.status === 'active' ? 'פעיל' : 'ממתין'}
                     </p>
                   </div>
+
+                  {/* Expand Button */}
+                  <button
+                    onClick={() => toggleExpanded(call.id)}
+                    className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                    title={expandedCalls.has(call.id) ? 'הסתר פרטים' : 'הצג פרטים'}
+                  >
+                    {expandedCalls.has(call.id) ? (
+                      <ChevronUp className="w-5 h-5" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5" />
+                    )}
+                  </button>
 
                   {/* Action Buttons */}
                   <div className="flex items-center space-x-2 space-x-reverse">
@@ -250,6 +243,85 @@ const ActiveCalls: React.FC = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Expanded Details */}
+              {expandedCalls.has(call.id) && (
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Client Details */}
+                    <div className="bg-blue-50 rounded-lg p-4">
+                      <h5 className="font-semibold text-blue-900 mb-3 flex items-center">
+                        👤 פרטי לקוח
+                      </h5>
+                      <div className="space-y-2">
+                        <div className="flex items-center text-sm">
+                          <Phone className="w-4 h-4 ml-2 text-green-600" />
+                          <span className="font-medium">טלפון:</span>
+                          <span className="mr-2 font-mono">{call.phoneNumber}</span>
+                        </div>
+                        <div className="flex items-center text-sm">
+                          <User className="w-4 h-4 ml-2 text-blue-600" />
+                          <span className="font-medium">זיהוי:</span>
+                          <span className="mr-2 font-mono text-xs bg-blue-100 px-2 py-1 rounded">
+                            {call.clientCallerId}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Driver Details */}
+                    <div className="bg-green-50 rounded-lg p-4">
+                      <h5 className="font-semibold text-green-900 mb-3 flex items-center">
+                        🚗 פרטי נהג
+                      </h5>
+                      <div className="space-y-2">
+                        <div className="flex items-center text-sm">
+                          <Phone className="w-4 h-4 ml-2 text-green-600" />
+                          <span className="font-medium">טלפון:</span>
+                          <span className="mr-2 font-mono">{call.driverPhone}</span>
+                        </div>
+                        <div className="flex items-center text-sm">
+                          <User className="w-4 h-4 ml-2 text-blue-600" />
+                          <span className="font-medium">זיהוי:</span>
+                          <span className="mr-2 font-mono text-xs bg-green-100 px-2 py-1 rounded">
+                            {call.driverCallerId}
+                          </span>
+                        </div>
+                        <div className="flex items-center text-sm">
+                          <Car className="w-4 h-4 ml-2 text-purple-600" />
+                          <span className="font-medium">מזהה נהג:</span>
+                          <span className="mr-2 font-mono text-xs bg-purple-100 px-2 py-1 rounded">
+                            {call.driverId}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Company Details */}
+                    <div className="bg-purple-50 rounded-lg p-4">
+                      <h5 className="font-semibold text-purple-900 mb-3 flex items-center">
+                        🏢 פרטי חברה
+                      </h5>
+                      <div className="space-y-2">
+                        <div className="flex items-center text-sm">
+                          <Building className="w-4 h-4 ml-2 text-purple-600" />
+                          <span className="font-medium">מזהה חברה:</span>
+                          <span className="mr-2 font-mono text-xs bg-purple-100 px-2 py-1 rounded">
+                            {call.companyId}
+                          </span>
+                        </div>
+                        <div className="flex items-center text-sm">
+                          <Clock className="w-4 h-4 ml-2 text-gray-600" />
+                          <span className="font-medium">התחלה:</span>
+                          <span className="mr-2 text-xs">
+                            {call.startTime.toLocaleTimeString('he-IL')}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
