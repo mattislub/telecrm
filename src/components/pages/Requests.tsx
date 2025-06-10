@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send, Code, Zap, FileText, Phone, MessageSquare } from 'lucide-react';
+import { Send, Code, Zap, FileText, Phone, MessageSquare, AlertCircle, CheckCircle } from 'lucide-react';
 
 interface RequestLog {
   id: string;
@@ -8,6 +8,7 @@ interface RequestLog {
   status: number;
   time: string;
   response: string;
+  error?: string;
 }
 
 const Requests: React.FC = () => {
@@ -42,83 +43,169 @@ const Requests: React.FC = () => {
   const [verificationCode, setVerificationCode] = useState('123456');
   const [verificationTimeout, setVerificationTimeout] = useState('60');
 
+  const BASE_URL = 'https://telephone.drive-it.co.il';
+
+  const makeAPIRequest = async (url: string, options: RequestInit) => {
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+      });
+
+      const responseText = await response.text();
+      let responseData;
+      
+      try {
+        responseData = JSON.parse(responseText);
+      } catch {
+        responseData = responseText;
+      }
+
+      return {
+        status: response.status,
+        data: responseData,
+        ok: response.ok
+      };
+    } catch (error) {
+      throw new Error(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
   const handleAPIRequest = async () => {
     setIsLoading(true);
     
-    // Simulate API request
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const mockResponse = method === 'GET' ? {
-      message: "Success",
-      status: "Data Retrieved.",
-      data: [
-        { id: 'call_123', client_name: 'יוחנן דו', status: 'active' },
-        { id: 'call_456', client_name: 'ג\'יין סמית', status: 'waiting' }
-      ]
-    } : {
-      message: "Success",
-      status: "Call Initiated."
-    };
+    try {
+      const url = `${BASE_URL}${endpoint}`;
+      const options: RequestInit = {
+        method,
+      };
 
-    const newLog: RequestLog = {
-      id: Date.now().toString(),
-      method,
-      endpoint: `https://telephone.drive-it.co.il${endpoint}`,
-      status: 200,
-      time: new Date().toLocaleTimeString(),
-      response: JSON.stringify(mockResponse, null, 2)
-    };
+      if (method === 'POST' || method === 'PUT') {
+        options.body = requestBody;
+      }
 
-    setLogs(prev => [newLog, ...prev]);
-    setIsLoading(false);
+      const result = await makeAPIRequest(url, options);
+
+      const newLog: RequestLog = {
+        id: Date.now().toString(),
+        method,
+        endpoint: url,
+        status: result.status,
+        time: new Date().toLocaleTimeString('he-IL'),
+        response: typeof result.data === 'string' ? result.data : JSON.stringify(result.data, null, 2)
+      };
+
+      setLogs(prev => [newLog, ...prev]);
+    } catch (error) {
+      const newLog: RequestLog = {
+        id: Date.now().toString(),
+        method,
+        endpoint: `${BASE_URL}${endpoint}`,
+        status: 0,
+        time: new Date().toLocaleTimeString('he-IL'),
+        response: '',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+
+      setLogs(prev => [newLog, ...prev]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleTelephoneCall = async () => {
     setIsLoading(true);
     
-    // Simulate telephone API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    const mockResponse = {
-      message: "Success",
-      status: "Call Initiated."
-    };
+    try {
+      const url = `${BASE_URL}/callback.php`;
+      const body = {
+        Fphonenumber: firstPhone,
+        Fcallerid: firstCallerId,
+        Sphonenumber: secondPhone,
+        Scallerid: secondCallerId,
+        Companyid: companyId,
+        Driverid: driverId,
+        ringtimeout: ringTimeout
+      };
 
-    const newLog: RequestLog = {
-      id: Date.now().toString(),
-      method: 'POST',
-      endpoint: 'https://telephone.drive-it.co.il/callback.php',
-      status: 200,
-      time: new Date().toLocaleTimeString(),
-      response: JSON.stringify(mockResponse, null, 2)
-    };
+      const result = await makeAPIRequest(url, {
+        method: 'POST',
+        body: JSON.stringify(body)
+      });
 
-    setLogs(prev => [newLog, ...prev]);
-    setIsLoading(false);
+      const newLog: RequestLog = {
+        id: Date.now().toString(),
+        method: 'POST',
+        endpoint: url,
+        status: result.status,
+        time: new Date().toLocaleTimeString('he-IL'),
+        response: typeof result.data === 'string' ? result.data : JSON.stringify(result.data, null, 2)
+      };
+
+      setLogs(prev => [newLog, ...prev]);
+    } catch (error) {
+      const newLog: RequestLog = {
+        id: Date.now().toString(),
+        method: 'POST',
+        endpoint: `${BASE_URL}/callback.php`,
+        status: 0,
+        time: new Date().toLocaleTimeString('he-IL'),
+        response: '',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+
+      setLogs(prev => [newLog, ...prev]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleVerificationCall = async () => {
     setIsLoading(true);
     
-    // Simulate verification call API
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const mockResponse = {
-      message: "Success",
-      status: "Call Initiated."
-    };
+    try {
+      const url = `${BASE_URL}/call.php`;
+      const body = {
+        phonenumber: phoneNumber,
+        callerid: callerId,
+        calltype: callType,
+        verifictioncode: verificationCode,
+        ringtimeout: verificationTimeout
+      };
 
-    const newLog: RequestLog = {
-      id: Date.now().toString(),
-      method: 'POST',
-      endpoint: 'https://telephone.drive-it.co.il/call.php',
-      status: 200,
-      time: new Date().toLocaleTimeString(),
-      response: JSON.stringify(mockResponse, null, 2)
-    };
+      const result = await makeAPIRequest(url, {
+        method: 'POST',
+        body: JSON.stringify(body)
+      });
 
-    setLogs(prev => [newLog, ...prev]);
-    setIsLoading(false);
+      const newLog: RequestLog = {
+        id: Date.now().toString(),
+        method: 'POST',
+        endpoint: url,
+        status: result.status,
+        time: new Date().toLocaleTimeString('he-IL'),
+        response: typeof result.data === 'string' ? result.data : JSON.stringify(result.data, null, 2)
+      };
+
+      setLogs(prev => [newLog, ...prev]);
+    } catch (error) {
+      const newLog: RequestLog = {
+        id: Date.now().toString(),
+        method: 'POST',
+        endpoint: `${BASE_URL}/call.php`,
+        status: 0,
+        time: new Date().toLocaleTimeString('he-IL'),
+        response: '',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+
+      setLogs(prev => [newLog, ...prev]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const methods = ['GET', 'POST', 'PUT', 'DELETE'];
@@ -130,6 +217,13 @@ const Requests: React.FC = () => {
     '/call-history.php'
   ];
 
+  const getStatusColor = (status: number, error?: string) => {
+    if (error || status === 0) return 'bg-red-100 text-red-800';
+    if (status >= 200 && status < 300) return 'bg-green-100 text-green-800';
+    if (status >= 400 && status < 500) return 'bg-yellow-100 text-yellow-800';
+    return 'bg-red-100 text-red-800';
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -137,7 +231,11 @@ const Requests: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">בקשות API ושיחות טלפון</h1>
-            <p className="text-gray-600 mt-1">בדיקת נקודות קצה API ויצירת שיחות טלפון</p>
+            <p className="text-gray-600 mt-1">שליחת בקשות אמיתיות ל-API ויצירת שיחות טלפון</p>
+            <div className="mt-2 flex items-center space-x-2 space-x-reverse">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="text-sm text-gray-600">מחובר ל-{BASE_URL}</span>
+            </div>
           </div>
           <div className="flex space-x-2 space-x-reverse">
             <button
@@ -484,7 +582,7 @@ const Requests: React.FC = () => {
           <div className="p-6 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900 flex items-center">
               <FileText className="w-5 h-5 ml-2" />
-              יומן תגובות
+              יומן תגובות אמיתיות
             </h3>
           </div>
 
@@ -493,7 +591,7 @@ const Requests: React.FC = () => {
               <div className="text-center text-gray-500 py-8">
                 <Code className="w-12 h-12 mx-auto mb-4 text-gray-300" />
                 <p>עדיין לא נשלחו בקשות</p>
-                <p className="text-sm">שלח בקשה כדי לראות את התגובה כאן</p>
+                <p className="text-sm">שלח בקשה כדי לראות את התגובה האמיתית כאן</p>
               </div>
             ) : (
               <div className="space-y-4 max-h-96 overflow-y-auto">
@@ -511,19 +609,46 @@ const Requests: React.FC = () => {
                         <code className="text-sm text-gray-600 truncate max-w-xs">{log.endpoint}</code>
                       </div>
                       <div className="flex items-center space-x-2 space-x-reverse">
-                        <span className={`px-2 py-1 text-xs font-medium rounded ${
-                          log.status === 200 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                        }`}>
-                          {log.status}
-                        </span>
+                        {log.error ? (
+                          <div className="flex items-center space-x-1 space-x-reverse">
+                            <AlertCircle className="w-4 h-4 text-red-500" />
+                            <span className="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-800">
+                              שגיאה
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center space-x-1 space-x-reverse">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            <span className={`px-2 py-1 text-xs font-medium rounded ${getStatusColor(log.status)}`}>
+                              {log.status}
+                            </span>
+                          </div>
+                        )}
                         <span className="text-xs text-gray-500">{log.time}</span>
                       </div>
                     </div>
-                    <div className="bg-gray-50 rounded p-3">
-                      <pre className="text-xs text-gray-700 overflow-x-auto">
-                        {log.response}
-                      </pre>
-                    </div>
+                    
+                    {log.error ? (
+                      <div className="bg-red-50 border border-red-200 rounded p-3">
+                        <div className="flex items-center space-x-2 space-x-reverse mb-2">
+                          <AlertCircle className="w-4 h-4 text-red-500" />
+                          <span className="text-sm font-medium text-red-800">שגיאה בבקשה:</span>
+                        </div>
+                        <pre className="text-xs text-red-700 overflow-x-auto">
+                          {log.error}
+                        </pre>
+                      </div>
+                    ) : (
+                      <div className="bg-gray-50 rounded p-3">
+                        <div className="flex items-center space-x-2 space-x-reverse mb-2">
+                          <CheckCircle className="w-4 h-4 text-green-500" />
+                          <span className="text-sm font-medium text-gray-800">תגובת השרת:</span>
+                        </div>
+                        <pre className="text-xs text-gray-700 overflow-x-auto">
+                          {log.response}
+                        </pre>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
