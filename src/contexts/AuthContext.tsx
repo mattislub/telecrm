@@ -13,7 +13,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
@@ -22,29 +22,18 @@ export const useAuth = () => {
 interface AuthProviderProps {
   children: ReactNode;
 }
- const [user, setUser] = useState<User | null>(null);
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
-      const response = await fetch('/login', {
       const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-
-  const login = async (username: string, password: string): Promise<boolean> => {
-    try {
-      const response = await fetch('/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
       });
 
@@ -56,7 +45,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(data.user as User);
       setToken(data.token as string);
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   };
