@@ -172,7 +172,7 @@ const Requests: React.FC = () => {
         phonenumber: phoneNumber,
         callerid: callerId,
         calltype: callType,
-        verifictioncode: verificationCode,
+        verificationcode: verificationCode,
         ringtimeout: verificationTimeout
       };
 

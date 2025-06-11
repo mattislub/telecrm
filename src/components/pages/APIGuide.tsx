@@ -37,7 +37,7 @@ const APIGuide: React.FC = () => {
   "phonenumber": "1234567890",
   "callerid": "1234456789",
   "calltype": "missedcall",
-  "verifictioncode": "123456",
+  "verificationcode": "123456",
   "ringtimeout": "60"
 }`,
       responseExample: `{
@@ -128,7 +128,7 @@ const APIGuide: React.FC = () => {
   "phonenumber": "1234567890",
   "callerid": "1234456789",
   "calltype": "missedcall",
-  "verifictioncode": "123456",
+  "verificationcode": "123456",
   "ringtimeout": "60"
 }'`
   };
@@ -262,7 +262,7 @@ const APIGuide: React.FC = () => {
                     <p className="text-gray-600">סוג השיחה (missedcall/verification)</p>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-700">verifictioncode</p>
+                    <p className="font-medium text-gray-700">verificationcode</p>
                     <p className="text-gray-600">קוד האימות לשליחה</p>
                   </div>
                   <div>
