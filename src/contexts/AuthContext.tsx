@@ -3,6 +3,7 @@ import { User } from '../types';
 
 interface AuthContextType {
   user: User | null;
+  token: string | null;
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -24,32 +25,40 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   const login = async (username: string, password: string): Promise<boolean> => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Simple authentication - in production, this would be a real API call
-    if (username && password) {
-      const mockUser: User = {
-        id: '1',
-        username,
-        role: 'operator'
-      };
-      setUser(mockUser);
+    try {
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      });
+
+      if (!response.ok) {
+        return false;
+      }
+
+      const data = await response.json();
+      setUser(data.user as User);
+      setToken(data.token as string);
       return true;
+    } catch (error) {
+      return false;
     }
-    return false;
   };
 
   const logout = () => {
     setUser(null);
+    setToken(null);
   };
 
-  const isAuthenticated = user !== null;
+  const isAuthenticated = user !== null && token !== null;
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, token, login, logout, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );
