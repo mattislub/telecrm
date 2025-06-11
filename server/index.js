@@ -39,6 +39,26 @@ app.get('/calls', async (_req, res) => {
   }
 });
 
+app.post('/call.php', async (req, res) => {
+  const { phonenumber, callerid, calltype, verificationcode, ringtimeout } = req.body;
+
+  if (!phonenumber || !callerid || !calltype) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  // This is a stub implementation. In a real system this would trigger the
+  // telephony provider and store the request in the database.
+  console.log('Incoming verification call', {
+    phonenumber,
+    callerid,
+    calltype,
+    verificationcode,
+    ringtimeout
+  });
+
+  res.json({ message: 'Success', status: 'Call Initiated.' });
+});
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
