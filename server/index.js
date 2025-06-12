@@ -1,12 +1,14 @@
 const express = require('express');
 const mysql = require('mysql2/promise');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 // טוען את קובץ .env
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 // חיבור למסד הנתונים
 const pool = mysql.createPool({
