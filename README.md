@@ -17,7 +17,7 @@ telecrm
    # Frontend requests will default to this API base
    VITE_API_BASE_URL=http://localhost:3001
    ```
-   By default the frontend will send API requests to `http://localhost:3001`.
+   By default the frontend will send API requests to `http://localhost:3001`. For production set `VITE_API_BASE_URL` to `http://telephone.drive-it.co.il` so requests go to `/callback.php` without the `:3001` port.
 
 3. Start the server (for example on port `3001`):
    ```bash
