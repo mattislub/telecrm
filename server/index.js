@@ -25,7 +25,10 @@ app.post('/login', async (req, res) => {
       [username, password]
     );
     if (rows.length) {
-      res.json({ success: true });
+      const user = { id: rows[0].id, username };
+      // יצירת אסימון דמה לצורכי דוגמה בלבד
+      const token = 'dummy-token';
+      res.json({ success: true, user, token });
     } else {
       res.status(401).json({ success: false });
     }

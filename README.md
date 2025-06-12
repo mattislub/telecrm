@@ -8,8 +8,14 @@ telecrm
    npm install
    ```
 
-2. Copy `.env.example` to `.env` and adjust if necessary. By default the
-   frontend will send API requests to `http://localhost:3001`.
+2. Create a `.env` file with your database connection details:
+   ```
+   DB_HOST=localhost
+   DB_USER=your_user
+   DB_PASSWORD=your_password
+   DB_DATABASE=your_db
+   ```
+   By default the frontend will send API requests to `http://localhost:3001`.
 
 3. Start the server (for example on port `3001`):
    ```bash
