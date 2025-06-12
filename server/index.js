@@ -1,7 +1,8 @@
-const express = require('express');
-const mysql = require('mysql2/promise');
-const dotenv = require('dotenv');
-const cors = require('cors');
+import express from 'express';
+import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import { pathToFileURL } from 'url';
 
 // טוען את קובץ .env
 dotenv.config();
@@ -72,7 +73,9 @@ app.post('/call.php', async (req, res) => {
 
 // הפעלת השרת
 const PORT = process.env.PORT || 3001;
-if (require.main === module) {
+
+// Start the server only when this file is executed directly
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
   });
