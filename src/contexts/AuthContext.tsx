@@ -28,10 +28,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
+  const LOGIN_ENDPOINT = `${API_BASE_URL}/login`;
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/login`, {
+      // Use a POST request to securely transmit credentials
+      const response = await fetch(LOGIN_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
