@@ -1,16 +1,22 @@
-import express from 'express';
-import mysql from 'mysql2/promise';
+const express = require('express');
+const mysql = require('mysql2/promise');
+const dotenv = require('dotenv');
 
-export const app = express();
+// טוען את קובץ .env
+dotenv.config();
+
+const app = express();
 app.use(express.json());
 
-export const pool = mysql.createPool({
+// חיבור למסד הנתונים
+const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE
 });
 
+// התחברות משתמש
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -24,21 +30,23 @@ app.post('/login', async (req, res) => {
       res.status(401).json({ success: false });
     }
   } catch (err) {
-    console.error(err);
+    console.error('Login error:', err);
     res.status(500).json({ error: 'DB error' });
   }
 });
 
+// בקשת שיחות
 app.get('/calls', async (_req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM calls LIMIT 100');
     res.json(rows);
   } catch (err) {
-    console.error(err);
+    console.error('Calls error:', err);
     res.status(500).json({ error: 'DB error' });
   }
 });
 
+// קריאת אימות (stub)
 app.post('/call.php', async (req, res) => {
   const { phonenumber, callerid, calltype, verificationcode, ringtimeout } = req.body;
 
@@ -46,8 +54,6 @@ app.post('/call.php', async (req, res) => {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  // This is a stub implementation. In a real system this would trigger the
-  // telephony provider and store the request in the database.
   console.log('Incoming verification call', {
     phonenumber,
     callerid,
@@ -59,8 +65,9 @@ app.post('/call.php', async (req, res) => {
   res.json({ message: 'Success', status: 'Call Initiated.' });
 });
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const PORT = process.env.PORT || 3000;
+// הפעלת השרת
+const PORT = process.env.PORT || 3001;
+if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
   });
