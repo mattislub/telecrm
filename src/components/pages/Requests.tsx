@@ -43,7 +43,7 @@ const Requests: React.FC = () => {
   const [verificationCode, setVerificationCode] = useState('123456');
   const [verificationTimeout, setVerificationTimeout] = useState('60');
 
-  const BASE_URL = 'https://telephone.drive-it.co.il';
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
   const makeAPIRequest = async (url: string, options: RequestInit) => {
     try {

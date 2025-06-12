@@ -14,6 +14,8 @@ telecrm
    DB_USER=your_user
    DB_PASSWORD=your_password
    DB_DATABASE=your_db
+   # Frontend requests will default to this API base
+   VITE_API_BASE_URL=http://localhost:3001
    ```
    By default the frontend will send API requests to `http://localhost:3001`.
 

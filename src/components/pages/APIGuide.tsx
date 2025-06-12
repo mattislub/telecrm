@@ -5,6 +5,7 @@ import { APIExample } from '../../types';
 const APIGuide: React.FC = () => {
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [selectedExample, setSelectedExample] = useState<string>('telephone-callback');
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
   const apiExamples: APIExample[] = [
     {
@@ -111,8 +112,8 @@ const APIGuide: React.FC = () => {
   const selectedExampleData = apiExamples.find(ex => ex.id === selectedExample);
 
   const curlExamples = {
-    'telephone-callback': `curl --location 'https://telephone.drive-it.co.il/callback.php' \\
---header 'Content-Type: application/json' \\
+    'telephone-callback': `curl --location '${BASE_URL}/callback.php' \\
+  --header 'Content-Type: application/json' \\
 --data '{
   "Fphonenumber": "0533177906",
   "Fcallerid": "0765989921", 
@@ -122,7 +123,7 @@ const APIGuide: React.FC = () => {
   "Driverid": "DIV12345678",
   "ringtimeout": "60"
 }'`,
-    'verification-call': `curl --location 'https://telephone.drive-it.co.il/call.php' \\
+    'verification-call': `curl --location '${BASE_URL}/call.php' \\
 --header 'Content-Type: application/json' \\
 --data '{
   "phonenumber": "1234567890",
@@ -193,7 +194,7 @@ const APIGuide: React.FC = () => {
               <div>
                 <p className="text-sm font-medium text-gray-700">כתובת בסיס</p>
                 <code className="text-xs bg-gray-100 px-2 py-1 rounded block mt-1">
-                  https://telephone.drive-it.co.il
+                  {BASE_URL}
                 </code>
               </div>
               <div>
@@ -306,10 +307,10 @@ const APIGuide: React.FC = () => {
                   </h3>
                   <div className="bg-gray-50 rounded-lg p-4 flex items-center justify-between">
                     <code className="text-sm font-mono text-gray-800">
-                      {selectedExampleData.method} https://telephone.drive-it.co.il{selectedExampleData.endpoint}
+                      {selectedExampleData.method} {BASE_URL}{selectedExampleData.endpoint}
                     </code>
                     <button
-                      onClick={() => copyToClipboard(`https://telephone.drive-it.co.il${selectedExampleData.endpoint}`, 'endpoint')}
+                      onClick={() => copyToClipboard(`${BASE_URL}${selectedExampleData.endpoint}`, 'endpoint')}
                       className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
                     >
                       {copiedCode === 'endpoint' ? (
