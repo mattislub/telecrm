@@ -17,7 +17,9 @@ telecrm
    # Frontend requests will default to this API base
    VITE_API_BASE_URL=http://localhost:3001
    ```
-   By default the frontend will send API requests to `http://localhost:3001`. For production set `VITE_API_BASE_URL` to `https://telephone.drive-it.co.il` (note the `https` protocol) so requests go to `/callback.php` without the `:3001` port and avoid CORS issues caused by HTTP to HTTPS redirects.
+By default the frontend will send API requests to `http://localhost:3001`. For production set `VITE_API_BASE_URL` to `https://telephone.drive-it.co.il/api/endpoint` (note the `https` protocol) so requests go to `/api/endpoint/callback.php` without the `:3001` port and avoid CORS issues caused by HTTP to HTTPS redirects.
+
+When deploying the frontend, the built app should be served from `https://telephone.drive-it.co.il/0/`. The Vite configuration sets `base: '/0/'` so all assets resolve correctly under that path.
 
 3. Start the server (for example on port `3001`):
    ```bash
@@ -33,7 +35,7 @@ telecrm
 Use the following cURL command to trigger a verification call via the API:
 
 ```bash
-curl --location 'https://telephone.drive-it.co.il/call.php' \
+curl --location 'https://telephone.drive-it.co.il/api/endpoint/call.php' \
 --header 'Content-Type: application/json' \
 --data '{
   "phonenumber": "1234567890",
