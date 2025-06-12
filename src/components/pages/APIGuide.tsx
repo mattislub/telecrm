@@ -5,7 +5,9 @@ import { APIExample } from '../../types';
 const APIGuide: React.FC = () => {
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [selectedExample, setSelectedExample] = useState<string>('telephone-callback');
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+  // Allow overriding the API base via env and strip :3001 if present
+  const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
+  const BASE_URL = rawBaseUrl.replace(':3001', '');
 
   const apiExamples: APIExample[] = [
     {

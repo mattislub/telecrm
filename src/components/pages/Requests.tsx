@@ -43,7 +43,9 @@ const Requests: React.FC = () => {
   const [verificationCode, setVerificationCode] = useState('123456');
   const [verificationTimeout, setVerificationTimeout] = useState('60');
 
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+  // Allow overriding the API base via env and strip :3001 if present
+  const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
+  const BASE_URL = rawBaseUrl.replace(':3001', '');
 
   const makeAPIRequest = async (url: string, options: RequestInit) => {
     try {
