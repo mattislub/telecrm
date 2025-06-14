@@ -3,6 +3,8 @@ import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { pathToFileURL } from 'url';
+import fs from 'fs';
+import https from 'https';
 
 // טוען את קובץ .env
 dotenv.config();
@@ -76,7 +78,22 @@ const PORT = process.env.PORT || 3001;
 
 // Start the server only when this file is executed directly
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
-  });
+  const useSSL = process.env.USE_SSL === 'true';
+  if (useSSL) {
+    const keyPath = process.env.SSL_KEY_PATH || 'ssl/key.pem';
+    const certPath = process.env.SSL_CERT_PATH || 'ssl/cert.pem';
+
+    const sslOptions = {
+      key: fs.readFileSync(keyPath),
+      cert: fs.readFileSync(certPath),
+    };
+
+    https.createServer(sslOptions, app).listen(PORT, () => {
+      console.log(`HTTPS server listening on port ${PORT}`);
+    });
+  } else {
+    app.listen(PORT, () => {
+      console.log(`Server listening on port ${PORT}`);
+    });
+  }
 }

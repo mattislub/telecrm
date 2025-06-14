@@ -16,10 +16,15 @@ telecrm
    DB_DATABASE=your_db
    # Frontend requests will default to this API base
    VITE_API_BASE_URL=http://localhost:3001
+   # Enable SSL for the API server
+   USE_SSL=true
+   SSL_KEY_PATH=ssl/key.pem
+   SSL_CERT_PATH=ssl/cert.pem
    ```
    By default the frontend will send API requests to `http://localhost:3001`. For production set `VITE_API_BASE_URL` to `https://telephone.drive-it.co.il` (note the `https` protocol) so requests go to `/callback.php` without the `:3001` port and avoid CORS issues caused by HTTP to HTTPS redirects.
 
-3. Start the server (for example on port `3001`):
+3. Start the server (for example on port `3001`). Ensure the SSL key and
+   certificate files exist at the paths provided above:
    ```bash
    PORT=3001 npm run start
    ```
