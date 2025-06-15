@@ -10,6 +10,8 @@ telecrm
 
 2. Copy `.env.example` to `.env` and adjust if necessary. By default the
    frontend will send API requests to `http://localhost:3001`.
+   If you want the backend to serve over HTTPS, set `SSL_KEY` and `SSL_CERT`
+   in the `.env` file to the paths of your TLS key and certificate files.
 
 3. Start the server (for example on port `3001`):
    ```bash

@@ -1,5 +1,7 @@
 import express from 'express';
 import mysql from 'mysql2/promise';
+import fs from 'fs';
+import https from 'https';
 
 export const app = express();
 app.use(express.json());
@@ -61,7 +63,16 @@ app.post('/call.php', async (req, res) => {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const PORT = process.env.PORT || 3001;
-  app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
-  });
+
+  if (process.env.SSL_KEY && process.env.SSL_CERT) {
+    const key = fs.readFileSync(process.env.SSL_KEY);
+    const cert = fs.readFileSync(process.env.SSL_CERT);
+    https.createServer({ key, cert }, app).listen(PORT, () => {
+      console.log(`HTTPS server listening on port ${PORT}`);
+    });
+  } else {
+    app.listen(PORT, () => {
+      console.log(`Server listening on port ${PORT}`);
+    });
+  }
 }
