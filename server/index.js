@@ -13,7 +13,8 @@ export const pool = mysql.createPool({
   database: process.env.DB_DATABASE
 });
 
-app.post('/login', async (req, res) => {
+// Prefix all API routes with /api to match the deployed URL structure
+app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
   try {
     const [rows] = await pool.query(

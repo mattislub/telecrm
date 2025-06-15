@@ -27,7 +27,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
+  // Default to the production API base URL if none is provided via env vars
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL ?? 'https://telephone.drive-it.co.il/api';
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
