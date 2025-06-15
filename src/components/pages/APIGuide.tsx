@@ -14,12 +14,14 @@ const APIGuide: React.FC = () => {
       method: 'POST',
       endpoint: '/callback.php',
       requestBody: `{
-  "Fphonenumber": "0533177906",
+  "Fphonenumber": "0533177908",
   "Fcallerid": "0765989921",
-  "Sphonenumber": "0527186026",
+  "Sphonenumber": "0527186029",
   "Scallerid": "0765989922",
   "Companyid": "C123456789",
   "Driverid": "DIV12345678",
+  "Driver_Name": "AK",
+  "Company_Name": "Exotek",
   "ringtimeout": "60"
 }`,
       responseExample: `{
@@ -114,12 +116,14 @@ const APIGuide: React.FC = () => {
     'telephone-callback': `curl --location 'https://telephone.drive-it.co.il/callback.php' \\
 --header 'Content-Type: application/json' \\
 --data '{
-  "Fphonenumber": "0533177906",
-  "Fcallerid": "0765989921", 
-  "Sphonenumber": "0527186026",
+  "Fphonenumber": "0533177908",
+  "Fcallerid": "0765989921",
+  "Sphonenumber": "0527186029",
   "Scallerid": "0765989922",
   "Companyid": "C123456789",
   "Driverid": "DIV12345678",
+  "Driver_Name": "AK",
+  "Company_Name": "Exotek",
   "ringtimeout": "60"
 }'`,
     'verification-call': `curl --location 'https://telephone.drive-it.co.il/call.php' \\
@@ -240,6 +244,14 @@ const APIGuide: React.FC = () => {
                   <div>
                     <p className="font-medium text-gray-700">Driverid</p>
                     <p className="text-gray-600">מזהה הנהג</p>
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-700">Driver_Name</p>
+                    <p className="text-gray-600">שם הנהג</p>
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-700">Company_Name</p>
+                    <p className="text-gray-600">שם החברה</p>
                   </div>
                   <div>
                     <p className="font-medium text-gray-700">ringtimeout</p>
