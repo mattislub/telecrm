@@ -16,24 +16,28 @@ const Requests: React.FC = () => {
   const [method, setMethod] = useState('POST');
   const [endpoint, setEndpoint] = useState('/callback.php');
   const [requestBody, setRequestBody] = useState(`{
-  "Fphonenumber": "0533177906",
+  "Fphonenumber": "0533177908",
   "Fcallerid": "0765989921",
-  "Sphonenumber": "0527186026",
+  "Sphonenumber": "0527186029",
   "Scallerid": "0765989922",
   "Companyid": "C123456789",
   "Driverid": "DIV12345678",
+  "Driver_Name": "AK",
+  "Company_Name": "Exotek",
   "ringtimeout": "60"
 }`);
   const [isLoading, setIsLoading] = useState(false);
   const [logs, setLogs] = useState<RequestLog[]>([]);
   
   // For telephone call
-  const [firstPhone, setFirstPhone] = useState('0533177906');
+  const [firstPhone, setFirstPhone] = useState('0533177908');
   const [firstCallerId, setFirstCallerId] = useState('0765989921');
-  const [secondPhone, setSecondPhone] = useState('0527186026');
+  const [secondPhone, setSecondPhone] = useState('0527186029');
   const [secondCallerId, setSecondCallerId] = useState('0765989922');
   const [companyId, setCompanyId] = useState('C123456789');
   const [driverId, setDriverId] = useState('DIV12345678');
+  const [driverName, setDriverName] = useState('AK');
+  const [companyName, setCompanyName] = useState('Exotek');
   const [ringTimeout, setRingTimeout] = useState('60');
 
   // For verification call
@@ -128,6 +132,8 @@ const Requests: React.FC = () => {
         Scallerid: secondCallerId,
         Companyid: companyId,
         Driverid: driverId,
+        Driver_Name: driverName,
+        Company_Name: companyName,
         ringtimeout: ringTimeout
       };
 
@@ -313,7 +319,7 @@ const Requests: React.FC = () => {
                       value={firstPhone}
                       onChange={(e) => setFirstPhone(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="0533177906"
+                      placeholder="0533177908"
                     />
                   </div>
                   <div>
@@ -341,7 +347,7 @@ const Requests: React.FC = () => {
                       value={secondPhone}
                       onChange={(e) => setSecondPhone(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="0527186026"
+                      placeholder="0527186029"
                     />
                   </div>
                   <div>
@@ -382,6 +388,30 @@ const Requests: React.FC = () => {
                       onChange={(e) => setDriverId(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="DIV12345678"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      שם נהג
+                    </label>
+                    <input
+                      type="text"
+                      value={driverName}
+                      onChange={(e) => setDriverName(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="AK"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      שם חברה
+                    </label>
+                    <input
+                      type="text"
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Exotek"
                     />
                   </div>
                 </div>
