@@ -2,9 +2,14 @@ import express from 'express';
 import mysql from 'mysql2/promise';
 import fs from 'fs';
 import https from 'https';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const app = express();
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '..', 'dist')));
 
 export const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -59,6 +64,10 @@ app.post('/call.php', async (req, res) => {
   });
 
   res.json({ message: 'Success', status: 'Call Initiated.' });
+});
+
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
 
 if (import.meta.url === `file://${process.argv[1]}`) {

@@ -22,6 +22,12 @@ telecrm
    ```bash
    npm run dev
    ```
+
+5. For a production build, generate the static files:
+   ```bash
+   npm run build
+   ```
+   The server will automatically serve the contents of the `dist/` directory.
 ## Verification Call Example
 
 Use the following cURL command to trigger a verification call via the API:
